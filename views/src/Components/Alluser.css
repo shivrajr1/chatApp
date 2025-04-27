@@ -1,0 +1,13 @@
+.Allusers_container{
+    background-color: blue;
+    width: 40%;
+    min-height: 90vh;
+    font-size: 25px;
+}
+.user_link{
+    text-align: center;
+}
+.user_link:hover {
+    cursor: pointer;
+    background-color: azure;
+}

@@ -1,0 +1,15 @@
+.Chat_container{
+    background-color: blueviolet;
+    width: 60%;
+}
+.chat_input{
+    width: 60%;
+    position: fixed;
+    bottom:  10px;
+    display: flex;
+    justify-content: center;
+}
+input{
+    padding: 10px;
+    outline: none;
+}
