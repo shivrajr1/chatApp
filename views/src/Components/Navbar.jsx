@@ -1,26 +1,48 @@
-import React from 'react'
-import { NavLink } from "react-router-dom";
-import axios from 'axios'
-import {useNavigate} from 'react-router-dom'
-import './Navbar.css'
+import React from "react";
+import { NavLink, useNavigate } from "react-router-dom";
+import axios from "axios";
+import "./Navbar.css";
+
 export default function Navbar() {
+  const navigate = useNavigate();
+  const isLoggedIn = !!localStorage.getItem("user");
 
-    const navigate = useNavigate();
-  let logout=async()=>{
-    await axios.delete(`${import.meta.env.VITE_Server}/user/logout`,{withCredentials:true})
-    localStorage.removeItem()
-    navigate("/login")
-  }
+  const logout = async () => {
+    try {
+      await axios.delete(
+        `${import.meta.env.VITE_Server}/user/logout`,
+        { withCredentials: true }
+      );
 
-  
+      localStorage.removeItem("user");
+      navigate("/login");
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   return (
-    <nav className='nav-container'>
-        <NavLink to="/" className={'navlink'}>Home</NavLink>
-        <div>
-        <NavLink to="/register"className={'navlink'}>register</NavLink>
-        <NavLink to="/login"className={'navlink'}>login</NavLink>
-        <NavLink to="/login"className={'navlink'} onClick={logout}>logout</NavLink>
-        </div>
+    <nav className="nav-container">
+      <NavLink to="/" className="nav-logo">
+        ChatApp
+      </NavLink>
+
+      <div className="nav-links">
+        {!isLoggedIn ? (
+          <>
+            <NavLink to="/register" className="navlink">
+              Register
+            </NavLink>
+            <NavLink to="/login" className="navlink">
+              Login
+            </NavLink>
+          </>
+        ) : (
+          <button className="navlink logout-btn" onClick={logout}>
+            Logout
+          </button>
+        )}
+      </div>
     </nav>
-  )
+  );
 }

@@ -1,31 +1,44 @@
-import axios from 'axios';
-import "./Alluser.css"
-import React, { useEffect, useState } from 'react'
-import {useNavigate} from 'react-router-dom'
+import axios from "axios";
+import "./Alluser.css";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-export default function Allusers({info}) {
-    
-    const navigate = useNavigate();
-    const [users,setUsers]=useState([]);
+export default function Allusers({ info }) {
+  const navigate = useNavigate();
+  const [users, setUsers] = useState([]);
 
-   let func=async()=>{
-    await axios.get(`${import.meta.env.VITE_Server}/data/alluser`,{withCredentials:true})
-    .then((res)=>{
-        setUsers(res.data) 
-    }).catch((err)=>{
-        console.log(err)
-    })
-   }
-    useEffect(()=>{
-        if(!localStorage.getItem('user')){
-            return navigate('/login')
-        }
-        func();
+  useEffect(() => {
+    if (!localStorage.getItem("user")) {
+      navigate("/login");
+      return;
     }
-    ,[])
+
+    axios
+      .get(`${import.meta.env.VITE_Server}/data/alluser`, {
+        withCredentials: true,
+      })
+      .then((res) =>{ setUsers(res.data)})
+      .catch(console.log);
+  }, [navigate]);
+
   return (
-    <div className="Allusers_container">
-        {users&&users.map((e,idx)=><div key={idx} className='user_link' onClick={()=>{info(e.username)}}>{e.username}</div>)}
+    <div className="allusers-container">
+      <h3 className="allusers-title">Users</h3>
+
+      <div className="allusers-list">
+        {users.map((user, idx) => (
+          <div
+            key={idx}
+            className="user-item"
+            onClick={() => info(user)}
+          >
+            <div className="user-avatar">
+              {user.username.charAt(0).toUpperCase()}
+            </div>
+            <span className="user-name">{user.username}</span>
+          </div>
+        ))}
+      </div>
     </div>
-  )
+  );
 }

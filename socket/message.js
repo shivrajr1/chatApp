@@ -1,29 +1,52 @@
-const { db } = require("../config/db")
+const { db } = require("../config/db");
 
-module.exports = (io, socket, data, users) => {
-    // if(typeof socket.request.session.user=="undefined"){
-    //     io.to(socket.id).emit("error","unauthorised");
-    //     return;
-    // }
-    // let query = `SELECT * FROM users WHERE usrname IN ('${data.user}','${data.toUser}');`
-    // db.query(query, (err, result) => {
-    //     if (err) {
-    //        return io.to(socket.id).emit("error","something went wrong");
-    //     }
-    //     if (result.length == 2) {
-    //         let q = `insert into messages (message,sender_id,receiver_id) value ?`
-    //         db.query(q, [data.message, result[0].id, result[1].id], (err) => {
-    //             if (err) {
-    //                 return io.to(socket.id).emit("error","something went wrong");
-    //              }
-    //         })
-            // if(users.has(data.toUser)){
-            //     return io.to(users[data.toUser]).emit("message",data.message);
-            // }
-            io.emit("message",data.toUser);
-    //     }else{
-    //         return io.to(socket.id).emit("error","something went wrong");
-    //     }
-    // })
+module.exports = async (io, socket, data, users) => {
+    try {
+        const sessionUser = socket.request.session?.user;
+        if (!sessionUser) {
+            return socket.emit("error", "unauthorised");
+        }
 
-}
+        const { toUser, message } = data;
+        const fromUser = sessionUser.username;
+
+        const q1 = `
+            SELECT id, username
+            FROM users
+            WHERE username IN (?, ?)
+        `;
+
+        const [result] = await db.query(q1, [fromUser, toUser]);
+
+        if (result.length !== 2) {
+            return socket.emit("error", "invalid users");
+        }
+
+        const sender = result.find(u => u.username === fromUser);
+        const receiver = result.find(u => u.username === toUser);
+
+        const q2 = `
+            INSERT INTO messages (message, sender_id, receiver_id)
+            VALUES (?, ?, ?)
+        `;
+
+        await db.query(q2, [message, sender.id, receiver.id]);
+
+        
+        if (users.has(toUser)) {
+            io.to(users.get(toUser)).emit("message", {
+                from: fromUser,
+                message
+            });
+        }
+
+        socket.emit("message", {
+            to: toUser,
+            message
+        });
+
+    } catch (err) {
+        console.error(err);
+        socket.emit("error", "something went wrong");
+    }
+};

@@ -1,26 +1,20 @@
-const {db}=require("../../config/db");
-const wrapAsync = require("../../uitl/wrapAsync");
-module.exports=(req,res)=>{
-    let q1=`select * from users where username=?`
-     db.query(q1,[req.body.username],(err,result)=>{
-        if(err){
-            return res.status(402).send("db error");
-        }
-        let values = [req.body.username, req.body.email, req.body.number, req.body.role, req.body.password];
-        if(result.length==0){ 
+const { db } = require("../../config/db");
+const CustomErr = require('../../uitl/err')
 
-            let q2=`insert into users(username,email,mobile_number,role,pswd) values ?;`;
-          
-            db.query(q2,[[values]],(err,result)=>{
-                if(err){
-                    return res.status(402).send("db error");
-                } 
-                req.session.user=result[0];
-                return res.status(200).send("success");
-            })
-        }else{
-            return res.status(400).send("user already exist");
-        }
-    })
-    
+module.exports = async (req, res) => {
+    const { username, email, password } = req.body;
+
+    const q1 = `SELECT * FROM users WHERE username = ?`;
+    const [existingUsers] = await db.query(q1, [username]);
+
+    if (existingUsers.length > 0) {
+        throw new CustomErr(400, "user already exists")
+    }
+
+    const q2 = `INSERT INTO users(username, email, password_hash) VALUES (?, ?, ?)`;
+    const [insertResult] = await db.query(q2, [username, email, password]);
+
+    req.session.user = { id: insertResult.insertId, username, email };
+
+    return res.status(200).send(req.session.user);
 }

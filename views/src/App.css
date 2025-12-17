@@ -1,0 +1,11 @@
+.app {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Navbar height assumed ~60px */
+.app-content {
+  flex: 1;
+  overflow: hidden;
+}

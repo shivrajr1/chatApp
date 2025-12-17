@@ -1,19 +1,52 @@
-.nav-container{
-    z-index: 1;
-    position: sticky;
-    top: -1px;
-    padding: 10px;
-    background-color: rgb(14, 73, 73);
-    color: white;
-    height: 10dvh;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+.nav-container {
+  height: 60px;
+  background: #4f46e5;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  font-family: Arial, sans-serif;
 }
-.navlink{
-    margin-right: 20px;
-    color: white;
-    text-decoration: none;
-    font-size: 20px;
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+
+/* Logo */
+.nav-logo {
+  font-size: 18px;
+  font-weight: bold;
+  color: white;
+  text-decoration: none;
+}
+
+/* Links */
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.navlink {
+  color: white;
+  text-decoration: none;
+  font-size: 14px;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 5px;
+  transition: background 0.2s;
+}
+
+.navlink:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Active link */
+.navlink.active {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* Logout button */
+.logout-btn {
+  font-weight: bold;
 }

@@ -1,4 +1,7 @@
 {
+  "engines": {
+    "node": "v25.1.0"
+  },
   "name": "chatapp",
   "version": "1.0.0",
   "main": "index.js",

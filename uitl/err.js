@@ -1,8 +1,8 @@
-class CustomErr extends Error{
-    constructor(status,message){
+class CustomErr extends Error {
+    constructor(status, message) {
         super();
-        this.status=status,
-        this.message=message
+        this.status = status,
+            this.message = message
     }
 }
-module.exports=CustomErr;
+module.exports = CustomErr;

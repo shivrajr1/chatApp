@@ -1,15 +1,19 @@
+const { db } = require("../../config/db");
+const CustomErr = require("../../uitl/err");
 
-const {db}=require("../../config/db")
-module.exports=(req,res)=>{
-    // if(!req.session.user){
-    //     return res.status(410).send("unauthorised");
-    // }
+module.exports = async (req, res) => {
+
+    if (!req.session.user) {
+        throw new CustomErr(401, 'unauthorised')
+    }
+        const userId = req.session.user.id;
+
+    const q = `
+      SELECT id, username, email
+      FROM users 
+      WHERE id != ?
+    `;
     
-    let q=`select * from users`; 
-    db.query(q,(err,result)=>{
-        if(err){
-            return res.status(402).send("db error");
-        }
-        return res.status(200).send(result)
-    })
-}
+    const [users] = await db.query(q, [userId]);
+    return res.status(200).send(users);
+};

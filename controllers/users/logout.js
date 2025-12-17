@@ -1,4 +1,4 @@
-module.exports=(req,res)=>{
+module.exports = (req, res) => {
     req.session.destroy();
     res.status(200).send("success")
 }
